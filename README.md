@@ -1,5 +1,5 @@
 ## b-kube
-#### Kubernetes on Raspberry Pi cluster using ansible.
+#### Multi-Node HA Kubernetes cluster on Raspberry Pi.
 ##### What is this all about?
 
 Deploying kubernetes Cluster on cloud or on-premises, is not enough for people new to Kubernetes, to understand it.
