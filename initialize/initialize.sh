@@ -1,5 +1,6 @@
 #!/bin/bash
-. vars.cfg
+dir="$(dirname "$0")"
+. "$dir/vars.cfg"
 
 echo "Discovering network ..."
 sudo fing -n $network -o table,text,$fing_report_file,10 -r 1
