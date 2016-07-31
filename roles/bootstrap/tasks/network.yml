@@ -1,0 +1,8 @@
+---
+- name: NETWORK | Configure Nework
+  template: src=etc/network/interfaces.j2  dest=/etc/network/interfaces
+  register: network
+
+- name: SERVICE | Force networking restart
+  service: name=networking state=restarted
+  when: network.changed

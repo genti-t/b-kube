@@ -1,0 +1,34 @@
+---
+
+- name: COPY | Set /etc/localtime to {{ timezone }}
+  copy: >
+    src=/usr/share/zoneinfo/{{ timezone }}
+    dest=/etc/localtime
+    owner=root
+    group=root
+    mode=0644
+
+- name: COPY | Set default timezone
+  copy: >
+    content="{{ timezone }}\n"
+    dest=/etc/timezone
+    owner=root
+    group=root
+    mode=0644
+
+- name: ASSERT | validated package
+  assert:
+    that: 'ntp_pkg == "openntpd" or ntp_pkg == "ntp"'
+
+- name: APT | Install NTP daemon
+  apt: pkg={{ ntp_pkg }} state=present
+
+- name: TEMPLATE | Deploy OpenNTPd configuration file
+  template: src=etc/openntpd/ntpd.conf.j2 dest=/etc/openntpd/ntpd.conf
+  notify: restart openntpd
+  when: ntp_pkg == 'openntpd'
+
+- name: TEMPLATE | Deploy NTPd configuration file
+  template: src=etc/ntp.conf.j2 dest=/etc/ntp.conf
+  notify: restart ntp
+  when: ntp_pkg == 'ntp'

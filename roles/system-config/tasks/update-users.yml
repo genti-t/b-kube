@@ -1,0 +1,6 @@
+---
+  - name: Remove default user
+    user: >
+      name={{ default_user }}
+      state=absent
+      remove=yes

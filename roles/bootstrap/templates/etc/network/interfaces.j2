@@ -1,0 +1,15 @@
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet dhcp
+pre-up sleep 2
+
+auto {{ alias_interface }}:1
+iface {{ alias_interface }}:1 inet static
+      address {{ management_ip }}
+      netmask 255.255.255.0

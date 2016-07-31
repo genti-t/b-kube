@@ -1,0 +1,12 @@
+---
+- name: Configure device-init.yaml
+  template: src=boot/device-init.yaml.j2 dest=/boot/device-init.yaml
+  notify:
+    - Reboot Server
+    - Waiting for server to come back
+
+- name: Configure /boot/cmdline.txt
+  copy: src=files/boot/cmdline.txt dest=/boot/ mode=755
+  notify:
+    - Reboot Server
+    - Waiting for server to come back

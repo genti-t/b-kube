@@ -1,0 +1,23 @@
+---
+- name: INCLUDE | Configure Hostname
+  include: hostname.yml
+
+- name: INCLUDE | Configure Device
+  include: init-device.yml
+
+- name: INCLUDE | Update Users
+  include: update-users.yml
+
+- name: INCLUDE | Install Minimal Base packages
+  include: apt.yml
+
+- name: LOCALE | Add
+  locale_gen: name={{ item }} state=present
+  with_items: "{{ locales }}"
+  notify: locale-gen
+
+- name: INCLUDE | Set timezone & time
+  include: time.yml
+
+- name: Copy pi-temp monitor
+  copy: src=scripts/pi-temp dest=/usr/bin/ mode=755

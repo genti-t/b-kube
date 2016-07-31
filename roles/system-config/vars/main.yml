@@ -1,0 +1,80 @@
+packages:
+  # - apt-transport-https
+  # - aptitude
+  # - bash-completion
+  # - bmon
+  # - cpanminus
+  # - curl
+  # - cron
+  # - cron-apt
+  # - debconf-utils
+  # - debian-goodies
+  # - dnsutils
+  # - gawk
+  # - gnupg
+  # - git
+  # - hdparm
+  - htop
+  # - hping3
+  - iftop
+  - iotop
+  - sysbench
+  # - iptraf-ng
+  # - lsof
+  # - lynx
+  # - make
+  # - most
+  # - mutt
+  # - netcat
+  # - nmap
+  # - nmon
+  # - ohai
+  # - parallel
+  # - pv
+  - python-pip
+  # - python-pycurl
+  # - pwgen
+  # - reptyr
+  # - rsyslog
+  # - rsync
+  # - screen
+  # - strace
+  - sudo
+  # - swaks
+  # - sysstat
+  # - telnet
+  # - tcpdump
+  # - unzip
+  - vim
+
+# hostname_files:
+#   - /etc/exim4/update-exim4.conf
+#   - /etc/printcap
+#   - /etc/hostname
+#   - /etc/hosts
+#   - /etc/ssh/ssh_host_rsa_key.pub
+#   - /etc/ssh/ssh_host_dsa_key.pub
+#   - /etc/motd
+#   - /etc/ssmtp/ssmtp.conf
+
+default_user: pirate
+
+
+# -------------------------
+# Locales
+# -------------------------
+locales:
+  - 'en_US.UTF-8'
+default_locale: 'en_US.UTF-8'
+
+
+# -------------------------
+# NTPd configuration
+# -------------------------
+ntp_hosts:
+  - '0.europe.pool.ntp.org'
+  - '1.europe.pool.ntp.org'
+  - '2.europe.pool.ntp.org'
+  - '3.europe.pool.ntp.org'
+ntp_pkg: 'ntp'
+timezone: 'Europe/Rome'

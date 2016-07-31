@@ -1,0 +1,5 @@
+files/certs/*
+files/password.txt
+files/kubestack/*
+not_implemented/*
+*.retry

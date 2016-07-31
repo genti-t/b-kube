@@ -1,0 +1,28 @@
+#!/bin/bash
+# Purpose: Display the ARM CPU and GPU  temperature of Raspberry Pi 2/3
+
+clear
+cpu=$(</sys/class/thermal/thermal_zone0/temp)
+echo "$(date) @ $(hostname)"
+echo "-------------------------------------------"
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+
+sysbench --test=cpu --max-time=2000  --num-threads=4 run
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+sysbench --test=cpu --max-time=2000  --num-threads=4 run
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+sysbench --test=cpu --max-time=2000  --num-threads=4 run
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+sysbench --test=cpu --max-time=2000  --num-threads=4 run
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+sysbench --test=cpu --max-time=2000  --num-threads=4 run
+echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp)"
+echo "CPU => $((cpu/1000))'C"
+
+# echo "GPU => $(/opt/vc/bin/vcgencmd measure_temp | cut -d = -f2)"
+# https://www.youtube.com/watch?v=5Ud-grj4Zl0

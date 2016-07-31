@@ -1,0 +1,8 @@
+---
+- hosts: kube
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  roles:
+    - system-config
+    - leds

@@ -1,0 +1,20 @@
+[kube]
+kube0   ansible_ssh_host=192.168.13.10 keepalived_priority=30 keepalived_state=MASTER
+kube1   ansible_ssh_host=192.168.13.11 keepalived_priority=20 keepalived_state=BACKUP
+kube2   ansible_ssh_host=192.168.13.12 keepalived_priority=10 keepalived_state=BACKUP
+kube3   ansible_ssh_host=192.168.13.13
+kube4   ansible_ssh_host=192.168.13.14
+
+[etcd]
+kube[0:4]
+
+[kube-master]
+kube[0:2]
+
+[kube-worker]
+kube[3:4]
+
+[kube:vars]
+ansible_ssh_user=ansible
+ansible_ssh_port=22
+ansible_ssh_private_key_file=~/.ssh/id_rsa

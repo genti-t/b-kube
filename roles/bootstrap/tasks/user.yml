@@ -1,0 +1,41 @@
+---
+- name: Add User for Ansible
+  user: >
+    name={{ user_name }}
+    shell=/bin/bash
+    groups=sudo
+    append=yes
+    state=present
+  # register: added_ansible_user
+  # when: need_bootstrap | failed
+
+- name: Disable prompt password for sudo
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^{{ user_name }} ALL = NOPASSWD :"
+    line: "{{ user_name }} ALL = NOPASSWD : ALL"
+    state: present
+  # when: need_bootstrap | failed
+
+- name: Add my user's public key to the new user
+  authorized_key:
+    user: "{{ user_name }}"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    state: present
+  # when: need_bootstrap | failed
+
+- name: Remove root SSH access
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  # when: need_bootstrap | failed
+
+- name: Remove password SSH access
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  # when: need_bootstrap | failed

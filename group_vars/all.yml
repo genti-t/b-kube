@@ -1,0 +1,70 @@
+---
+# SSL
+SSL_DIR: ~/openssl/hyperkube
+SSL_CERT_DIR: ~/openssl/hyperkube/certs
+SSL_VALIDITY: 1825
+CA_FILE: ca.pem
+CA_KEY_FILE: ca-key.pem
+ETCD_SSL_CONFIG: etcd-openssl.cnf
+KUBE_SSL_CONFIG: kube-openssl.cnf
+
+# bootstrap
+user_name: ansible
+alias_interface: eth0
+
+# kubestack-release
+KUBESTACK_FLANNEL_VERSION: "0.5.5"
+KUBESTACK_KUBERNETES_VERSION: "1.2.5"
+KUBESTACK_VERSION: "1.2.5"
+KUBESTACK_ETCD_VERSION: "3.0.0"
+temp_dir: "/tmp/kubestack"
+kubestack_dir: "./files/kubestack"
+
+# etcd vars
+ETCD_INITIAL_CLUSTER: "
+kube0=http://{{ hostvars.kube0.ansible_ssh_host }}:2380,\
+kube1=http://{{ hostvars.kube1.ansible_ssh_host }}:2380,\
+kube2=http://{{ hostvars.kube2.ansible_ssh_host }}:2380,\
+kube3=http://{{ hostvars.kube3.ansible_ssh_host }}:2380,\
+kube4=http://{{ hostvars.kube4.ansible_ssh_host }}:2380"
+
+ETCD_INITIAL_CLUSTER_STATE: new
+ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+ETCD_DATA_DIR: "/var/etcd/data"
+
+APISERVER_CRT_FILE: kube-master/apiserver.pem
+APISERVER_KEY_FILE: kube-master/apiserver-key.pem
+APISERVER_CSR_FILE: kube-master/apiserver.csr
+WORKER_CRT_FILE: kube-worker/worker.pem
+WORKER_KEY_FILE: kube-worker/worker-key.pem
+WORKER_CSR_FILE: kube-worker/worker.csr
+
+# Kubernetes vars
+POD_NETWORK: 100.10.0.0/16
+FLANNEL_BACKEND: vxlan
+FLANNEL_INTERFACE: eth0
+FLANNEL_ETCD_PREFIX: /coreos.com/network/config
+ETCD_ENDPOINTS: "\
+http://{{ hostvars.kube0.ansible_ssh_host }}:2379,\
+http://{{ hostvars.kube1.ansible_ssh_host }}:2379,\
+http://{{ hostvars.kube2.ansible_ssh_host }}:2379,\
+http://{{ hostvars.kube3.ansible_ssh_host }}:2379,\
+http://{{ hostvars.kube4.ansible_ssh_host }}:2379"
+
+KUBE_TLS_CERT_FILE: /etc/certs/apiserver.pem
+KUBE_TLS_PRIVATE_KEY_FILE: /etc/certs/apiserver-key.pem
+KUBE_CLIENT_CA_FILE: /etc/certs/ca.pem
+KUBE_SERVICE_ACCOUNT_KEY_FILE: /etc/certs/apiserver-key.pem
+ETCD_CA_FILE: /etc/certs/ca.pem
+ETCD_CLIENT_CERT_FILE: /etc/certs/etcdclient.pem
+ETCD_CLIENT_KEY_FILE: /etc/certs/etcdclient-key.pem
+KUBE_WORKER_CRT_FILE: /etc/certs/worker.pem
+KUBE_WORKER_KEY_FILE: /etc/certs/worker-key.pem
+MASTER_HOST: hyperkube.hypriot.gt
+PRIV_VIRTUAL_IPS: 192.168.13.9
+CLUSTER_NAME: hyperkube
+SERVICE_IP_RANGE: 100.3.0.0/24
+CLUSTER_DOMAIN: hyperkube.local
+DNS_REPLICAS: 1
+K8S_SERVICE_IP: 100.3.0.1
+DNS_SERVICE_IP: 100.3.0.10
