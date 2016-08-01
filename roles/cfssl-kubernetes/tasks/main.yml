@@ -1,0 +1,32 @@
+---
+- name: CFSSL | Assures directory exists
+  file: path={{ item }} state=directory
+  with_items:
+    - "{{ cfssl_dir }}/certs"
+    - "{{ cfssl_dir }}/config"
+
+- name: CFSSL | Setting Certificate Authority, Generate cfssl config files from templates
+  template: src={{ item.src}} dest={{ item.dest }} mode=0644
+  with_items:
+    - { src: ca-config.json.j2, dest: "{{ cfssl_dir }}/config/ca-config.json" }
+    - { src: ca-csr.json.j2, dest: "{{ cfssl_dir }}/config/ca-csr.json" }
+    - { src: kubernetes-csr.json.j2, dest: "{{ cfssl_dir }}/config/kubernetes-csr.json" }
+  register: cfsssl_config_files
+
+- name: CFSSL | Generate the CA certificate and private key
+  shell: cfssl gencert  -initca ../config/ca-csr.json | cfssljson -bare ca
+  args:
+    chdir: "{{ cfssl_dir }}/certs"
+  when: cfsssl_config_files.changed
+
+
+- name: Generate the Kubernetes certificate and private key
+  shell: |
+    cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=../config/ca-config.json \
+    -profile=kubernetes ../config/kubernetes-csr.json | cfssljson -bare kubernetes
+  args:
+    chdir: "{{ cfssl_dir }}/certs"
+  when: cfsssl_config_files.changed

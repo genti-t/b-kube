@@ -1,0 +1,39 @@
+---
+# defaults file for cfssl-kubernetes
+cfssl_dir: ./files/cfssl
+expiry: "8760h"
+encr_size: 2048
+
+ca_country: IT
+ca_locality: Rome
+ca_organisation: Kubernetes
+ca_organisational_unit: Cluster
+ca_state: Italy
+ca_cn: Kubernetes
+ca_algo: rsa
+
+kube_cn: Kubernetes
+kube_country: IT
+kube_locality: Rome
+kube_organisation: Kubernetes
+kube_organisational_unit: Cluster
+kube_state: Italy
+
+etcd_hosts: "
+\t\"{{ hostvars.kube0.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube1.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube2.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube3.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube4.ansible_ssh_host }}\"
+"
+kube_hosts: "
+\t\"kubernetes\",\n
+\t\t\"kubernetes.default\",\n
+\t\t\"{{ MASTER_HOST }}\",\n
+\t\t\"{{ K8S_SERVICE_IP }}\",\n
+\t\t\"{{ hostvars.kube0.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube1.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube2.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube3.ansible_ssh_host }}\",\n
+\t\t\"{{ hostvars.kube4.ansible_ssh_host }}\"
+"

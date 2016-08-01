@@ -1,0 +1,19 @@
+{
+  "CN": "{{ kube_cn }}",
+  "hosts":[
+  {{ etcd_hosts }}
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "{{ kube_country }}",
+      "L": "{{ kube_locality }}",
+      "O": "{{ kube_organisation }}",
+      "OU": "{{ kube_organisational_unit }}",
+      "ST": "{{ kube_state }}"
+    }
+  ]
+}
