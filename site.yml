@@ -1,8 +1,19 @@
 ---
-- hosts: kube
+- hosts: all
   gather_facts: False
   become: yes
   become_method: sudo
   roles:
     - system-config
     - leds
+
+- hosts: localhost
+  roles:
+    - cfssl-kubernetes
+
+- hosts: etcd
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  roles:
+    - etcd

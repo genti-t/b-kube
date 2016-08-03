@@ -4,6 +4,10 @@
       "expiry": "{{ expiry }}"
     },
     "profiles": {
+      "etcd": {
+        "usages": ["signing", "key encipherment", "server auth", "client auth"],
+        "expiry": "{{ expiry }}"
+      },
       "kubernetes": {
         "usages": ["signing", "key encipherment", "server auth", "client auth"],
         "expiry": "{{ expiry }}"

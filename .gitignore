@@ -1,3 +1,4 @@
+initialize/hosts
 files/certs/*
 files/password.txt
 files/kubestack/*

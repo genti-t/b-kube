@@ -12,6 +12,13 @@ ca_state: Italy
 ca_cn: Kubernetes
 ca_algo: rsa
 
+etcd_cn: etcd
+etcd_country: IT
+etcd_locality: Rome
+etcd_organisation: Kubernetes
+etcd_organisational_unit: Cluster
+etcd_state: Italy
+
 kube_cn: Kubernetes
 kube_country: IT
 kube_locality: Rome

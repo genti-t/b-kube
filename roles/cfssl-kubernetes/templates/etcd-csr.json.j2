@@ -1,5 +1,5 @@
 {
-  "CN": "{{ kube_cn }}",
+  "CN": "{{ etcd_cn }}",
   "hosts":[
   {{ etcd_hosts }}
   ],
@@ -9,11 +9,11 @@
   },
   "names": [
     {
-      "C": "{{ kube_country }}",
-      "L": "{{ kube_locality }}",
-      "O": "{{ kube_organisation }}",
-      "OU": "{{ kube_organisational_unit }}",
-      "ST": "{{ kube_state }}"
+      "C": "{{ etcd_country }}",
+      "L": "{{ etcd_locality }}",
+      "O": "{{ etcd_organisation }}",
+      "OU": "{{ etcd_organisational_unit }}",
+      "ST": "{{ etcd_state }}"
     }
   ]
 }

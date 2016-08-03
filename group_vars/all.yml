@@ -1,4 +1,5 @@
 ---
+keepalived_vip: "192.168.13.9"
 # SSL
 SSL_DIR: ~/openssl/hyperkube
 SSL_CERT_DIR: ~/openssl/hyperkube/certs
@@ -22,11 +23,11 @@ kubestack_dir: "./files/kubestack"
 
 # etcd vars
 ETCD_INITIAL_CLUSTER: "
-kube0=http://{{ hostvars.kube0.ansible_ssh_host }}:2380,\
-kube1=http://{{ hostvars.kube1.ansible_ssh_host }}:2380,\
-kube2=http://{{ hostvars.kube2.ansible_ssh_host }}:2380,\
-kube3=http://{{ hostvars.kube3.ansible_ssh_host }}:2380,\
-kube4=http://{{ hostvars.kube4.ansible_ssh_host }}:2380"
+kube0=https://{{ hostvars.kube0.ansible_ssh_host }}:2380,\
+kube1=https://{{ hostvars.kube1.ansible_ssh_host }}:2380,\
+kube2=https://{{ hostvars.kube2.ansible_ssh_host }}:2380,\
+kube3=https://{{ hostvars.kube3.ansible_ssh_host }}:2380,\
+kube4=https://{{ hostvars.kube4.ansible_ssh_host }}:2380"
 
 ETCD_INITIAL_CLUSTER_STATE: new
 ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster

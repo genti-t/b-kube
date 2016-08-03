@@ -10,6 +10,7 @@
   with_items:
     - { src: ca-config.json.j2, dest: "{{ cfssl_dir }}/config/ca-config.json" }
     - { src: ca-csr.json.j2, dest: "{{ cfssl_dir }}/config/ca-csr.json" }
+    - { src: etcd-csr.json.j2, dest: "{{ cfssl_dir }}/config/etcd-csr.json" }
     - { src: kubernetes-csr.json.j2, dest: "{{ cfssl_dir }}/config/kubernetes-csr.json" }
   register: cfsssl_config_files
 
@@ -19,6 +20,16 @@
     chdir: "{{ cfssl_dir }}/certs"
   when: cfsssl_config_files.changed
 
+- name: Generate the etcd certificate and private key
+  shell: |
+    cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=../config/ca-config.json \
+    -profile=etcd ../config/etcd-csr.json | cfssljson -bare etcd
+  args:
+    chdir: "{{ cfssl_dir }}/certs"
+  when: cfsssl_config_files.changed
 
 - name: Generate the Kubernetes certificate and private key
   shell: |
