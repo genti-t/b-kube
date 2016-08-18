@@ -1,0 +1,8 @@
+---
+# handlers file for kube-worker
+- name: daemon-reload
+  command: systemctl daemon-reload
+- name: restart docker
+  service: name=docker state=restarted
+- name: restart kubelet
+  service: name=kubelet state=restarted

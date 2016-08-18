@@ -1,0 +1,28 @@
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/kubelet \
+  --allow-privileged=true \
+  --api-servers=https://{{ hostvars.kube0.ansible_ssh_host }}:6443,https://{{ hostvars.kube1.ansible_ssh_host }}:6443,https://{{ hostvars.kube2.ansible_ssh_host }}:6443 \
+  --cloud-provider= \
+  --cluster-dns={{ DNS_SERVICE_IP }} \
+  --cluster-domain={{ CLUSTER_DOMAIN }} \
+  --configure-cbr0=true \
+  --container-runtime=docker \
+  --docker=unix:///var/run/docker.sock \
+  --network-plugin=kubenet \
+  --kubeconfig=/var/lib/kubelet/kubeconfig \
+  --reconcile-cidr=true \
+  --serialize-image-pulls=false \
+  --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \
+  --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem \
+  --v=2
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

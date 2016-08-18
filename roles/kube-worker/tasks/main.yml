@@ -1,0 +1,99 @@
+---
+# Kubernetes kubelet no longer relies on docker networking for pods!
+# The kubelet can now use CNI
+
+- name: Assures Dipendentes directory exists
+  file: path={{ item }} state=directory
+  with_items:
+    - "{{ cni_bin_dir }}"
+
+- name: Install cni binaries
+  unarchive: >
+    src={{ cni_repo_url }}/releases/download/v{{ cni_version }}/cni-{{ arch }}-v{{cni_version}}.tgz
+    dest={{ cni_bin_dir }}
+    copy=no
+    mode=755
+    creates={{ cni_bin_dir }}/flannel
+
+- name: Verify Kubernetes binaries are installed
+  stat: path={{ kube_bin_dir }}/kubelet
+  register: kubelet_binaries
+
+- name: Download and install the Kubernetes binaries
+  get_url: >
+    url=https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/{{ arch }}/{{ item }}
+    dest={{ kube_bin_dir }}
+    mode=0755
+    force=no
+  with_items:
+    - kubectl
+    - kube-proxy
+    - kubelet
+  when: not kubelet_binaries.stat.exists
+
+- name: Assures Dipendentes directory exists
+  file: path={{ item }} state=directory
+  with_items:
+    - /var/lib/kubernetes
+    - /var/lib/kubelet
+
+- name: Copy SSL cert files
+  copy: >
+    src=./files/cfssl/certs/{{ item }}
+    dest=/var/lib/kubernetes/{{ item }}
+    mode=600
+  with_items:
+    - ca.pem
+    - kubernetes-key.pem
+    - kubernetes.pem
+
+- name: Setup kubeconfig file
+  template: >
+    src={{ item.src}}
+    dest=/var/lib/kubelet/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kubeconfig.j2, dest: kubeconfig }
+
+- name: Setup /etc/hosts file
+  lineinfile: dest=/etc/hosts line="{{ PRIV_VIRTUAL_IPS }} {{ MASTER_HOST }}"
+
+- name: Setup systemd unit file - docker
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: docker.service.j2, dest: docker.service }
+  notify:
+    - daemon-reload
+    - restart docker
+
+- name: Setup systemd unit file - kubelet
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kubelet.service.j2, dest: kubelet.service }
+  notify:
+    - daemon-reload
+    - restart kubelet
+
+- name: Setup systemd unit file - kube-proxy
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kube-proxy.service.j2, dest: kube-proxy.service }
+  notify:
+    - daemon-reload
+    - restart kube-proxy
+
+- name: Start services and enable on boot
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - docker
+    - kubelet
+    - kube-proxy
