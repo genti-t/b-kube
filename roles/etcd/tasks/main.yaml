@@ -1,0 +1,32 @@
+---
+- name: Install Binary
+  unarchive: >
+    src={{ etcd_repo_url }}/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-{{ arch }}.tar.gz
+    dest=/usr/bin
+    copy=no
+    creates=/usr/bin/etcd
+    mode=755
+
+- name: Assures directory /etc/etcd exists
+  file: path=/etc/etcd state=directory
+
+- name: Copy SSL cert files
+  copy: src=./files/cfssl/certs/{{ item }} dest=/etc/etcd/{{ item }} mode=600
+  with_items:
+    - ca.pem
+    - etcd-key.pem
+    - etcd.pem
+
+- name: Copy unit file into place
+  template: >
+    src=etcd.service.j2
+    dest=/etc/systemd/system/etcd.service
+    mode=644
+  notify:
+    - daemon-reload
+    - restart etcd
+
+- name: Start services and enable on boot
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - etcd

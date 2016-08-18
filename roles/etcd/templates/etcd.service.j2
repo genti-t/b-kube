@@ -1,0 +1,27 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+Type=notify
+Environment=ETCD_UNSUPPORTED_ARCH=arm
+ExecStart=/usr/bin/etcd --name  {{ inventory_hostname }} \
+  --cert-file=/etc/etcd/etcd.pem \
+  --key-file=/etc/etcd/etcd-key.pem \
+  --peer-cert-file=/etc/etcd/etcd.pem \
+  --peer-key-file=/etc/etcd/etcd-key.pem \
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --initial-advertise-peer-urls https://{{ ansible_ssh_host }}:2380 \
+  --listen-peer-urls https://{{ ansible_ssh_host }}:2380 \
+  --listen-client-urls https://{{ ansible_ssh_host }}:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://{{ ansible_ssh_host }}:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster {{ ETCD_INITIAL_CLUSTER }} \
+  --initial-cluster-state {{ ETCD_INITIAL_CLUSTER_STATE }} \
+  --data-dir={{ ETCD_DATA_DIR }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
