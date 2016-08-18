@@ -22,4 +22,4 @@ BSD
 Author Information
 ------------------
 
-Genti Topija - "genti.t@gmail.com"
+This role was created in 2014 by Genti Topija
