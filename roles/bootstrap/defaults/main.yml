@@ -1,1 +1,3 @@
 # -------------------------
+user_name: ansible
+alias_interface: eth0
