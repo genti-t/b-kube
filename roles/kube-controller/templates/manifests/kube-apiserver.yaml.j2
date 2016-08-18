@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  containers:
+  - name: kube-apiserver
+    image: gcr.io/google_containers/hyperkube-arm:v1.3.2
+    command:
+    - /hyperkube
+    - apiserver
+    - --admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+    - --advertise-address={{ ansible_ssh_host }}
+    - --allow-privileged=true
+    - --client-ca-file={{ KUBE_CLIENT_CA_FILE }}
+    - --cloud-provider=""
+    - --etcd-servers={{ ETCD_ENDPOINTS }}
+    - --insecure-port=8080
+    - --master-service-namespace=default
+    - --secure-port=6443
+    - --service-account-key-file={{ KUBE_SERVICE_ACCOUNT_KEY_FILE }}
+    - --service-cluster-ip-range={{ SERVICE_IP_RANGE }}
+    - --storage-backend=etcd3
+    - --tls-cert-file={{ KUBE_TLS_CERT_FILE }}
+    - --tls-private-key-file={{ KUBE_TLS_PRIVATE_KEY_FILE }}
+    ports:
+    - containerPort: 6443
+      hostPort: 6443
+      name: https
+    - containerPort: 8080
+      hostPort: 8080
+      name: local
+    volumeMounts:
+    - mountPath: /etc/certs
+      name: ssl-certs-kubernetes
+      readOnly: true
+  volumes:
+    - hostPath:
+        path: /etc/certs
+      name: ssl-certs-kubernetes

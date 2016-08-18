@@ -1,0 +1,67 @@
+global_defs {
+
+   notification_email {
+       {{ keepalived_notification_email }}
+   }
+   notification_email_from noreply@{{ ansible_ssh_host }}
+   smtp_server 127.0.0.1
+   smtp_connect_timeout 60
+   router_id LVS_KUBE
+}
+
+
+vrrp_sync_group VG1 {
+   group {
+      VKM
+   }
+   notify "/etc/keepalived/keepalived_notify.sh"
+}
+
+vrrp_instance VKM {
+    state BACKUP
+    interface eth0
+    track_interface {
+      eth0
+    }
+    virtual_router_id 1
+    priority {{ keepalived_priority }}
+    nopreempt
+    # advert_int 1
+    authentication {
+        auth_type PASS
+	      auth_pass {{ keepalived_passwd }}
+    }
+    unicast_peer {
+      {{ hostvars.kube0.ansible_ssh_host }}
+      {{ hostvars.kube1.ansible_ssh_host }}
+      {{ hostvars.kube2.ansible_ssh_host }}
+    }
+    virtual_ipaddress {
+      {{ keepalived_vip }}
+    }
+}
+
+
+
+
+virtual_server {{ keepalived_vip }} 6443 {
+    delay_loop 6
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+    real_server {{ hostvars.kube0.ansible_ssh_host }} 6443 {
+        TCP_CHECK {
+          connect_timeout 10
+        }
+    }
+    real_server {{ hostvars.kube1.ansible_ssh_host }} 6443 {
+        TCP_CHECK {
+          connect_timeout 10
+        }
+    }
+    real_server {{ hostvars.kube2.ansible_ssh_host }} 6443 {
+        TCP_CHECK {
+          connect_timeout 10
+        }
+    }
+}

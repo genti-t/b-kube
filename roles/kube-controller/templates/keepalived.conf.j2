@@ -1,0 +1,19 @@
+vrrp_script chk_haproxy {           # Requires keepalived-1.1.13
+        script "pidof haproxy"     # cheaper than pidof
+        interval 2                      # check every 2 seconds
+        weight 2                        # add 2 points of prio if OK
+}
+
+vrrp_instance VI_1 {
+        interface eth0
+        state BACKUP
+        virtual_router_id 50
+        priority {{ keepalived_priority }}
+        nopreempt
+        virtual_ipaddress {
+            {{ keepalived_vip }}
+        }
+        track_script {
+            chk_haproxy
+        }
+}

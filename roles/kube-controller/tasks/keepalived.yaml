@@ -1,0 +1,72 @@
+---
+- name: Install Keepalived Dipendences & HaProxy
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_flattened:
+    - gcc
+    - libssl-dev
+    - libnl-3-dev
+    - libnl-route-3-dev
+    - libnl-genl-3-dev
+    - iptables-dev
+    - libnfnetlink-dev
+    - libiptcdata0-dev
+    - make
+    - libipset-dev
+    - libsnmp-dev
+    - ca-certificates
+    - haproxy
+
+- name: Check if keepalived is installed
+  raw: stat /usr/sbin/keepalived
+  register: keepalived
+  ignore_errors: True
+
+- name: Download Keepalived
+  unarchive: >
+    src=https://github.com/acassen/keepalived/archive/v{{ keepalived_version }}.tar.gz
+    dest=/tmp
+    copy=no
+  when: keepalived | failed
+
+- name: Install Keepalived
+  command: "{{ item }}"
+  args:
+    chdir: /tmp/keepalived-{{ keepalived_version }}
+  with_items:
+    - ./configure --prefix=/usr --sysconfdir=/etc --enable-snmp --enable-sha1
+    - make
+    - make install
+    - rm -rfv /tmp/*
+  when: keepalived | failed
+
+- name: Turning ON packet forwarding
+  sysctl: name=net.ipv4.ip_forward value=1 state=present reload=yes
+
+- name: Turning ON nonocal bingding
+  sysctl: name=net.ipv4.ip_nonlocal_bind value=1 state=present reload=yes
+
+- name: Put Keepalived configuration file into place
+  template: src=keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf mode=0775
+  notify:
+    - restart keepalived
+
+- name: Put HaProxy configuration file into place
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg mode=0775
+  notify:
+    - restart haproxy
+
+- name: Put Keepalived notify file into place
+  copy: src=keepalived_notify.sh dest=/etc/keepalived/keepalived_notify.sh mode=0775
+  notify:
+
+- name: Put Keepalived unit file into place
+  copy: src=keepalived.service dest=/etc/systemd/system/keepalived.service mode=0775
+  notify:
+    - daemon-reload
+    - restart keepalived
+
+- name: Start keepalived services and enable on boot
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - haproxy
+    - keepalived

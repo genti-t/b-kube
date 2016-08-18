@@ -1,0 +1,12 @@
+[Unit]
+Description=LVS and VRRP High Availability Monitor
+After=network.target
+
+[Service]
+Type=forking
+KillMode=process
+ExecStart=/usr/sbin/keepalived
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

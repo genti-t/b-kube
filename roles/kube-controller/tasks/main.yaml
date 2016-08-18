@@ -1,0 +1,84 @@
+---
+- name: Verify Kubernetes controller binaries are installed
+  stat: path={{ kube_bin_dir }}/kube-apiserver
+  register: controller_binaries
+
+- name: Download and install the Kubernetes controller binaries
+  get_url: >
+    url=https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/{{ arch }}/{{ item }}
+    dest={{ kube_bin_dir }}
+    mode=0755
+    force=no
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+  when: not controller_binaries.stat.exists
+
+- name: Assures Dipendentes directory exists
+  file: path={{ item }} state=directory
+  with_items:
+    - /var/lib/kubernetes/
+
+- name: Copy SSL cert files
+  copy: >
+    src=./files/cfssl/certs/{{ item }}
+    dest=/var/lib/kubernetes/{{ item }}
+    mode=600
+  with_items:
+    - ca.pem
+    - kubernetes-key.pem
+    - kubernetes.pem
+
+- name: Setup Authentication and Authorization
+  template: >
+    src=securety/{{ item.src}}
+    dest=/var/lib/kubernetes/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: token.csv.j2, dest: token.csv }
+    - { src: authorization-policy.jsonl.j2, dest: authorization-policy.jsonl }
+
+- name: Setup systemd unit file - kube-apiserver
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kube-apiserver.service.j2, dest: kube-apiserver.service }
+  notify:
+    - daemon-reload
+    - restart kube-apiserver
+
+- name: Setup systemd unit file - kube-controller-manager
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kube-controller-manager.service.j2, dest: kube-controller-manager.service }
+  notify:
+    - daemon-reload
+    - restart kube-controller-manager
+
+- name: Setup systemd unit file - kube-scheduler
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: kube-scheduler.service.j2, dest: kube-scheduler.service }
+  notify:
+    - daemon-reload
+    - restart kube-scheduler
+
+- name: Start services and enable on boot
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+- name: Include | Install Keepalived
+  include: keepalived.yaml

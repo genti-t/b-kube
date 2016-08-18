@@ -1,0 +1,11 @@
+---
+- name: daemon-reload
+  command: systemctl daemon-reload
+- name: restart kube-apiserver
+  service: name=kube-apiserver state=restarted
+
+
+- name: restart keepalived
+  service: name=keepalived state=restarted
+- name: restart haproxy
+  service: name=haproxy state=restarted

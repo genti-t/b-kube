@@ -1,0 +1,10 @@
+---
+kubernetes_version: "1.3.4"
+arch: arm
+kube_bin_dir: "/usr/bin"
+controller_size: 3
+
+keepalived_version: 1.2.23
+keepalived_vip: "192.168.13.9"
+keepalived_passwd: "msaQyab"
+keepalived_notification_email: "genti.t@gmail.com"

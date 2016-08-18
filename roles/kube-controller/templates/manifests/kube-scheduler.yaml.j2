@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-scheduler
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  containers:
+  - name: kube-scheduler
+    image: gcr.io/google_containers/hyperkube-arm:v1.3.2
+    command:
+    - /hyperkube
+    - scheduler
+    - --leader-elect=true
+    - --master=127.0.0.1:8080
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 10251
+      initialDelaySeconds: 15
+      timeoutSeconds: 1

@@ -1,0 +1,50 @@
+global
+  log 127.0.0.1   local0
+  log 127.0.0.1   local1 notice
+  #log loghost    local0 info
+  maxconn 4096
+  #debug
+  #quiet
+  user haproxy
+  group haproxy
+
+defaults
+  log     global
+  mode    http
+  option  httplog
+  option  dontlognull
+  retries 3
+  redispatch
+  maxconn 2000
+  contimeout      5000
+  clitimeout      50000
+  stats enable
+
+listen  stats   {{ keepalived_vip }}:1936
+        mode            http
+        log             global
+        maxconn 10
+        clitimeout      100s
+        srvtimeout      100s
+        contimeout      100s
+        timeout queue   100s
+        stats enable
+        stats hide-version
+        stats refresh 30s
+        stats show-node
+        stats auth admin:b4z1ng0
+        stats uri /stats
+
+frontend kubeapi
+  bind {{ keepalived_vip }}:6443
+  option tcplog
+  mode tcp
+  default_backend kube-controller
+
+backend kube-controller
+  mode tcp
+  balance roundrobin
+  option ssl-hello-chk
+  server kube0 {{ hostvars.kube0.ansible_ssh_host }}:6443 check
+  server kube1 {{ hostvars.kube1.ansible_ssh_host }}:6443 check
+  server kube2 {{ hostvars.kube2.ansible_ssh_host }}:6443 check
