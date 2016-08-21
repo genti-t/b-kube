@@ -34,9 +34,15 @@ etcd_hosts: "
 \t\t\"{{ hostvars.kube4.ansible_ssh_host }}\"
 "
 kube_hosts: "
-\t\"kubernetes\",\n
+\t\"kube0\",\n
+\t\t\"kube1\",\n
+\t\t\"kube2\",\n
+\t\t\"kube3\",\n
+\t\t\"kube4\",\n
+\t\t\"kubernetes\",\n
 \t\t\"kubernetes.default\",\n
 \t\t\"{{ MASTER_HOST }}\",\n
+\t\t\"{{ PRIV_VIRTUAL_IPS }}\",\n
 \t\t\"{{ K8S_SERVICE_IP }}\",\n
 \t\t\"{{ hostvars.kube0.ansible_ssh_host }}\",\n
 \t\t\"{{ hostvars.kube1.ansible_ssh_host }}\",\n
