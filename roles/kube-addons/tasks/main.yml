@@ -1,0 +1,9 @@
+---
+- name: Assures addons dir exists
+  file: path={{ kube_addons_dir }} state=directory
+
+- include: dns.yml
+  when: dns_setup
+
+- include: dashboard.yml
+  when: dashboard_setup

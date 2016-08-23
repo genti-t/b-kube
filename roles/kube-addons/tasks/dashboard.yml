@@ -1,0 +1,14 @@
+---
+- name: KUBE-DASH | Assures {{ kube_addons_dir }}/dashboard dir exists
+  file: path={{ kube_addons_dir }}/dashboard state=directory
+
+- name: KUBE-DASH | Copy kube-dash manifests to master
+  template:
+    src: "dashboard/{{ item }}.j2"
+    dest: "{{ kube_addons_dir }}/dashboard/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - dashboard-controller.yaml
+    - dashboard-service.yaml

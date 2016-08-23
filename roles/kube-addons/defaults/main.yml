@@ -1,0 +1,17 @@
+kube_addons_dir: /etc/kubernetes/addons
+kube_admission_controls_dir: /etc/kubernetes/admission-controls
+# local_temp_addon_dir: /tmp/kubernetes/addons
+
+metrics_memory_initial: 200
+metrics_memory_per_node: 4
+metrics_memory: "{{ metrics_memory_initial + (metrics_memory_per_node * (groups['nodes'] | count)) }}Mi"
+
+eventer_memory_initial: 200
+eventer_memory_per_node: 500
+eventer_memory: "{{ eventer_memory_initial + (eventer_memory_per_node * (groups['nodes'] | count) / 1024) | round | int }}Mi"
+
+grains: ""
+
+dns_setup: true
+dashboard_setup: true
+cluster_monitoring: true

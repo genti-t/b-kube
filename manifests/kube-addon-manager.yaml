@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-addon-manager
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: kube-addon-manager
+        version: v5.1
+    spec:
+      hostNetwork: true
+      containers:
+      - name: kube-addon-manager
+        image: genti/kube-addon-manager-arm:v5.1
+        env:
+          - name: KUBECTL_OPTS
+            value: "--kubeconfig /var/lib/kubelet/kubeconfig"
+        command:
+          - /opt/kube-addons.sh
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 5m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /etc/kubernetes/addons
+          name: addons
+          readOnly: true
+        - mountPath: /var/lib/kubernetes/ca.pem
+          name: ca-file
+          readOnly: true
+        - mountPath: /var/lib/kubelet/kubeconfig
+          name: kubeconfig
+          readOnly: true
+      volumes:
+      - hostPath:
+          path: /etc/kubernetes/addons
+        name: addons
+      - hostPath:
+          path: /var/lib/kubernetes/ca.pem
+        name: ca-file
+      - hostPath:
+          path: /var/lib/kubelet/kubeconfig
+        name: kubeconfig
