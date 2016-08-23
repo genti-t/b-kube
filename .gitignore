@@ -1,3 +1,4 @@
 initialize/vars.cfg
 initialize/hosts
+files/cfssl/*:
 not_used/*
