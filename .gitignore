@@ -3,3 +3,4 @@ initialize/hosts
 files/cfssl/*
 not_used/*
 *.retry
+group_vars/all.yml

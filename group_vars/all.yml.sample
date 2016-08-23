@@ -5,8 +5,8 @@ bin_dir: "/usr/bin"
 # Keepalived vars
 keepalived_version: 1.2.23
 keepalived_vip: "192.168.13.9"
-keepalived_passwd: "msaQyab"
-keepalived_notification_email: "genti.t@gmail.com"
+keepalived_passwd: "ch4ng3m3"
+keepalived_notification_email: "your@mail.com"
 
 # Flannel overlay
 flannel_repo_url: https://github.com/coreos/flannel

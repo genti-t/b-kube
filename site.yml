@@ -11,9 +11,23 @@
   roles:
     - cfssl-kubernetes
 
-- hosts: etcd
+- hosts: etcd-nodes
   gather_facts: False
   become: yes
   become_method: sudo
   roles:
     - etcd
+
+- hosts: kube-controllers
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  roles:
+    - kube-controller
+
+- hosts: kube-minions
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  roles:
+    - kube-minion
