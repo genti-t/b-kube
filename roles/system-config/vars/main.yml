@@ -3,6 +3,7 @@ packages:
   # - aptitude
   # - bash-completion
   # - bmon
+  - bridge-utils
   # - cpanminus
   # - curl
   # - cron

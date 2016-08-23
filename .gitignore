@@ -1,6 +1,5 @@
+initialize/vars.cfg
 initialize/hosts
 files/cfssl/*
-files/password.txt
-files/kubestack/*
-not_implemented/*
+not_used/*
 *.retry

@@ -1,7 +1,9 @@
 ---
-# handlers file for kube-worker
+# handlers file for kube-minions
 - name: daemon-reload
   command: systemctl daemon-reload
+- name: restart flannel
+  service: name=flannel state=restarted
 - name: restart docker
   service: name=docker state=restarted
 - name: restart kubelet

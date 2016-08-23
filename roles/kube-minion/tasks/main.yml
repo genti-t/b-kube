@@ -1,28 +1,26 @@
 ---
-# Kubernetes kubelet no longer relies on docker networking for pods!
-# The kubelet can now use CNI
+- name: Turning ON packet forwarding
+  sysctl: name=net.ipv4.netfilter.ip_conntrack_tcp_be_liberal value=1 state=present reload=yes
 
-- name: Assures Dipendentes directory exists
-  file: path={{ item }} state=directory
-  with_items:
-    - "{{ cni_bin_dir }}"
+- name: Verify flannel binary is installed
+  stat: path={{ bin_dir }}/flanneld
+  register: flannel_binary
 
-- name: Install cni binaries
-  unarchive: >
-    src={{ cni_repo_url }}/releases/download/v{{ cni_version }}/cni-{{ arch }}-v{{cni_version}}.tgz
-    dest={{ cni_bin_dir }}
-    copy=no
+- name: Install flannel binary
+  get_url: >
+    url={{ flannel_repo_url }}/releases/download/v{{ flannel_version }}/flanneld-{{ arch }}
+    dest={{ bin_dir }}/flanneld
     mode=755
-    creates={{ cni_bin_dir }}/flannel
+  when: not flannel_binary.stat.exists
 
 - name: Verify Kubernetes binaries are installed
-  stat: path={{ kube_bin_dir }}/kubelet
+  stat: path={{ bin_dir }}/kubelet
   register: kubelet_binaries
 
 - name: Download and install the Kubernetes binaries
   get_url: >
     url=https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/{{ arch }}/{{ item }}
-    dest={{ kube_bin_dir }}
+    dest={{ bin_dir }}
     mode=0755
     force=no
   with_items:
@@ -57,6 +55,25 @@
 
 - name: Setup /etc/hosts file
   lineinfile: dest=/etc/hosts line="{{ PRIV_VIRTUAL_IPS }} {{ MASTER_HOST }}"
+
+- name: Setup systemd unit file - flannel
+  template: >
+    src=systemd/{{ item.src}}
+    dest=/etc/systemd/system/{{ item.dest }}
+    mode=0644
+  with_items:
+    - { src: flannel.service.j2, dest: flannel.service }
+  notify:
+    - daemon-reload
+    - restart flannel
+
+- name: Remove defualt docker config
+  file: path={{ item }} state=absent
+  with_items:
+    - /etc/systemd/system/docker.service.d
+  notify:
+    - daemon-reload
+    - restart docker
 
 - name: Setup systemd unit file - docker
   template: >
@@ -94,6 +111,7 @@
 - name: Start services and enable on boot
   service: name={{ item }} state=started enabled=yes
   with_items:
+    - flannel
     - docker
     - kubelet
     - kube-proxy

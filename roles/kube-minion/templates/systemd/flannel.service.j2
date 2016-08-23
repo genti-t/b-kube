@@ -1,0 +1,25 @@
+[Unit]
+Description=flannel is an etcd backed network fabric for containers
+Documentation=https://github.com/coreos/flannel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStartPre=-{{ bin_dir }}/etcdctl \
+  --ca-file /etc/etcd/ca.pem \
+  mk {{ FLANNEL_ETCD_PREFIX }} '{"Network":"{{ POD_NETWORK }}","Backend":{"Type":"{{ FLANNEL_BACKEND }}"}}'
+ExecStart=/usr/bin/flanneld \
+  --ip-masq \
+  --iface {{ FLANNEL_INTERFACE }}\
+  --etcd-endpoints "{{ ETCD_ENDPOINTS }}"\
+  --etcd-cafile=/etc/etcd/ca.pem
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+#--cert-file
+#--key-file
+#--endpoint

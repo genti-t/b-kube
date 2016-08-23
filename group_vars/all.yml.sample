@@ -1,0 +1,56 @@
+---
+arch: arm
+bin_dir: "/usr/bin"
+
+# Keepalived vars
+keepalived_version: 1.2.23
+keepalived_vip: "192.168.13.9"
+keepalived_passwd: "msaQyab"
+keepalived_notification_email: "genti.t@gmail.com"
+
+# Flannel overlay
+flannel_repo_url: https://github.com/coreos/flannel
+flannel_version: 0.6.1
+
+# etcd vars
+etcd_repo_url: "https://github.com/genti-t/etcd"
+etcd_version: "3.0.3"
+ETCD_INITIAL_CLUSTER: "
+kube0=https://{{ hostvars.kube0.ansible_ssh_host }}:2380,\
+kube1=https://{{ hostvars.kube1.ansible_ssh_host }}:2380,\
+kube2=https://{{ hostvars.kube2.ansible_ssh_host }}:2380,\
+kube3=https://{{ hostvars.kube3.ansible_ssh_host }}:2380,\
+kube4=https://{{ hostvars.kube4.ansible_ssh_host }}:2380"
+ETCD_ENDPOINTS: "\
+https://{{ hostvars.kube0.ansible_ssh_host }}:2379,\
+https://{{ hostvars.kube1.ansible_ssh_host }}:2379,\
+https://{{ hostvars.kube2.ansible_ssh_host }}:2379,\
+https://{{ hostvars.kube3.ansible_ssh_host }}:2379,\
+https://{{ hostvars.kube4.ansible_ssh_host }}:2379"
+ETCD_INITIAL_CLUSTER_STATE: new
+ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+ETCD_DATA_DIR: "/var/etcd/data"
+
+# Kubernetes vars
+kubernetes_version: "1.3.4"
+POD_NETWORK: 100.10.0.0/16
+FLANNEL_BACKEND: vxlan
+FLANNEL_INTERFACE: eth0
+FLANNEL_ETCD_PREFIX: /coreos.com/network/config
+MASTER_HOST: hyperkube.hypriot.gt
+PRIV_VIRTUAL_IPS: 192.168.13.9
+CLUSTER_NAME: hyperkube
+SERVICE_IP_RANGE: 100.3.0.0/24
+NODE_PORT_RANGE: "30000-32767"
+CLUSTER_DOMAIN: hyperkube.local
+DNS_REPLICAS: 1
+K8S_SERVICE_IP: 100.3.0.1
+DNS_SERVICE_IP: 100.3.0.10
+
+# Kubernetes Addons vars
+kube_addons_dir: /etc/kubernetes/addons
+kube_admission_controls_dir: /etc/kubernetes/admission-controls
+local_temp_addon_dir: /tmp/kubernetes/addons
+dns_setup: true
+dashboard_setup: true
+cluster_monitoring: true
