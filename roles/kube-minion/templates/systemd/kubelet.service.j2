@@ -5,24 +5,30 @@ Requires=docker.service
 
 [Service]
 ExecStart=/usr/bin/kubelet \
-  --allow-privileged=true \
   --api-servers=https://{{ hostvars.kube0.ansible_ssh_host }}:6443,https://{{ hostvars.kube1.ansible_ssh_host }}:6443,https://{{ hostvars.kube2.ansible_ssh_host }}:6443 \
+  --allow-privileged=true \
   --cloud-provider= \
   --cluster-dns={{ DNS_SERVICE_IP }} \
   --cluster-domain={{ CLUSTER_DOMAIN }} \
-  --configure-cbr0=true \
   --container-runtime=docker \
   --docker=unix:///var/run/docker.sock \
-  --network-plugin=kubenet \
+  --enable-server \
+  --hostname-override={{ ansible_ssh_host }} \
+  --node-ip={{ ansible_ssh_host }} \
+  --node-status-update-frequency=10s \
+  --register-node=true \
   --kubeconfig=/var/lib/kubelet/kubeconfig \
-  --reconcile-cidr=true \
   --serialize-image-pulls=false \
   --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \
   --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem \
   --v=2
-
 Restart=on-failure
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
+# TO CHECK
+#  --reconcile-cidr=true \
+#  --config=/etc/kubernetes/manifests \
+#  --pod-infra-container-image=gcr.io/google_containers/pause-arm:3.0 \

@@ -1,16 +1,16 @@
-kube-worker
+kube-minions
 ================
 
-Role for deploying kube-worker nodes
+Role for deploying kube-minions nodes
 
 Example Playbook
 ----------------
-    - hosts: kube-worker
+    - hosts: kube-minions
       gather_facts: False
       become: yes
       become_method: sudo
       roles:
-        - kube-worker
+        - kube-minions
 
 License
 -------

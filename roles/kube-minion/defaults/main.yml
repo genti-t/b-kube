@@ -1,0 +1,8 @@
+---
+arch: arm
+
+kubernetes_version: "1.3.4"
+bin_dir: "/usr/bin"
+
+flannel_repo_url: https://github.com/coreos/flannel
+flannel_version: 0.6.1
