@@ -1,14 +1,11 @@
 ---
 - name: Check if bootstrap is needed
-  become: yes
-  become_method: sudo
   raw: stat /root/.bootstrapped
   register: need_bootstrap
   ignore_errors: True
 
 - name: install python-simplejson
-  raw: sudo apt-get -y install python-simplejson
-  become_method: sudo
+  raw:  apt-get update &&  apt-get -y install python-simplejson
 
 - name: INCLUDE | Configure Ansible User
   include: user.yml
@@ -18,7 +15,5 @@
   include: network.yml
 
 - name: Create bootstrap file
-  become: yes
-  become_method: sudo
   file: path=/root/.bootstrapped state=touch
   when: need_bootstrap | failed
